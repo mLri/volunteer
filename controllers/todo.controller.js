@@ -48,3 +48,20 @@ module.exports.createTodo = async (req, res) => {
     handleError(error, res)
   }
 }
+
+module.exports.updateTodo = async (req, res) => {
+  try {
+    const _id = req.params.todo_id
+
+    const find_todo = await Todo.findOne({ _id })
+    if (!find_todo) throw statusError.bad_request_with_message(`not found todo_id ${_id}`)
+
+    /* update todo */
+    Object.assign(find_todo, { ...req.body })
+    const update_todo = await find_todo.save()
+
+    res.status(200).json(update_todo)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
