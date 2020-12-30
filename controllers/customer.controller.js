@@ -1,15 +1,10 @@
-/* include module */
-const bcrypt = require('bcrypt')
-const { verify } = require('jsonwebtoken')
-
 /* include models */
 const User = require('../models/user.model')
 
 /* include helpers */
-const { createAccessToken, createRefreshToken } = require('../helpers/token.helper')
 const { handleError } = require('../helpers/handle_error.helper')
 const statusError = require('../helpers/status_error.helper')
-const { uploadFile, uploadS3 } = require('../helpers/upload.helper')
+const { uploadS3 } = require('../helpers/upload.helper')
 
 module.exports.updateCustomer = async (req, res) => {
   try {

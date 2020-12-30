@@ -1,10 +1,9 @@
+/* include modules */
 const router = require('express').Router()
-const { check } = require('express-validator')
 
 /* validation */
-const { validateCustomer } = require('../validation/schema/customer.validate')
-const { handleErrorValidate } = require('../validation')
-const { validateInputFiles } = require('../validation/validateInputFiles')
+const { validateSchema, validateSchemaType, validateInputFiles, handleErrorValidate } = require('../validation')
+const { customerSchema } = require('../validation/schema/customer.schema')
 
 /* include controllers */
 const customer_controller = require('../controllers/customer.controller')
@@ -14,8 +13,9 @@ const { checkAuth } = require('../helpers/token.helper')
 
 router.patch('/:customer_id',
   checkAuth,
-  validateInputFiles({ type: ['image/jpeg'] }),
-  validateCustomer.updateCustomer(),
+  validateSchema(customerSchema.updateCustomer),
+  validateSchemaType(customerSchema.updateCustomer),
+  validateInputFiles({ type: 'image/jpeg' }),
   handleErrorValidate,
   customer_controller.updateCustomer)
 
