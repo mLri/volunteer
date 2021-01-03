@@ -25,11 +25,18 @@ router.post('/',
   handleErrorValidate,
   todo_controller.createTodo)
 
-router.patch('/:todo_id', 
+router.patch('/:todo_id',
   checkAuth,
   validateSchema(todoSchema.updateTodo),
   validateSchemaType(todoSchema.updateTodo),
   handleErrorValidate,
   todo_controller.updateTodo)
+
+router.delete('/:todo_id',
+  checkAuth,
+  validateSchema(todoSchema.deleteTodo),
+  validateSchemaType(todoSchema.deleteTodo),
+  handleErrorValidate,
+  todo_controller.deleteTodo)
 
 module.exports = router
