@@ -61,6 +61,13 @@ module.exports.todoSchema = {
     }
   },
   updateTodo: {
+    'todo_id': {
+      in: ['params'],
+      optional: false,
+      isMongoId: {
+        errorMessage: 'must be use MongoId type!'
+      }
+    },
     'title': {
       in: ['body'],
       optional: true,
@@ -73,6 +80,15 @@ module.exports.todoSchema = {
       optional: true,
       isBoolean: {
         errorMessage: 'must be use Boolean type!'
+      }
+    }
+  },
+  deleteTodo: {
+    'todo_id': {
+      in: ['params'],
+      optional: false,
+      isMongoId: {
+        errorMessage: 'must be use MongoID type!'
       }
     }
   }

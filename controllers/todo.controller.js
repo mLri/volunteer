@@ -65,3 +65,16 @@ module.exports.updateTodo = async (req, res) => {
     handleError(error, res)
   }
 }
+
+module.exports.deleteTodo = async (req, res) => {
+  try {
+    const _id = req.params.todo_id
+
+    const delete_todo = await Todo.findByIdAndDelete(_id)
+    if (!delete_todo) throw statusError.bad_request_with_message(`not found todo_id -> ${_id}`)
+
+    res.json(delete_todo)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
