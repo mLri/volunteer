@@ -6,6 +6,9 @@ const JobLevelSchema = new Schema({
     type: String,
     required: true
   },
+  slug: {
+    type: String
+  },
   status: {
     type: Boolean,
     required: true,
