@@ -19,4 +19,12 @@ router.patch('/:customer_id',
   handleErrorValidate,
   customer_controller.updateCustomer)
 
+router.patch('/:customer_id/company',
+  checkAuth,
+  validateSchema(customerSchema.updateCompany),
+  validateSchemaType(customerSchema.updateCompany),
+  validateInputFiles({ type: 'image/jpeg' }),
+  handleErrorValidate,
+  customer_controller.updateCompany)
+
 module.exports = router

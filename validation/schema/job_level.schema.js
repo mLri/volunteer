@@ -9,6 +9,15 @@ module.exports.jobLevelSchema = {
         errorMessage: 'must be use a-z or A-Z'
       }
     },
+    'slug': {
+      in: ['body'],
+      exists: true,
+      errorMessage: 'field slug is required!',
+      matches: {
+        options: /^[0-9A-Za-z\-\_ ]+$/i,
+        errorMessage: 'must be use a-z or A-Z'
+      }
+    },
     'status': {
       in: ['body'],
       optional: true,
@@ -28,8 +37,17 @@ module.exports.jobLevelSchema = {
     },
     'name': {
       in: ['body'],
+      optional: true,
       matches: {
         options: /^[0-9A-Za-z ]+$/i,
+        errorMessage: 'must be use a-z or A-Z'
+      }
+    },
+    'slug': {
+      in: ['body'],
+      optional: true,
+      matches: {
+        options: /^[0-9A-Za-z\-\_ ]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
