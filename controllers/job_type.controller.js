@@ -22,12 +22,12 @@ module.exports.listJobType = async (req, res) => {
 
 module.exports.createJobType = async (req, res) => {
   try {
-    const { name, status = true } = req.body
+    const { name, status = true, slug } = req.body
 
-    const exist_type_name = await JobType.findOne({ name }, { _id: true }).lean()
-    if (exist_type_name) throw statusError.bad_request_with_message(`type name ${name} is already exist!`)
+    const exist_type_name = await JobType.findOne({ $or: [{ name }, { slug }] }, { _id: true }).lean()
+    if (exist_type_name) throw statusError.bad_request_with_message(`type name ${name} or slug is already exist!`)
 
-    const create_job_type = await JobType.create({ name, status })
+    const create_job_type = await JobType.create({ name, status, slug })
 
     res.json(create_job_type)
   } catch (error) {

@@ -22,12 +22,12 @@ module.exports.listJobLevel = async (req, res) => {
 
 module.exports.createJobLevel = async (req, res) => {
   try {
-    const { name, status = true } = req.body
+    const { name, status = true, slug } = req.body
 
-    const exist_level_name = await JobLevel.findOne({ name }, { _id: true }).lean()
+    const exist_level_name = await JobLevel.findOne({ $or: [{ name }, { slug }] }, { _id: true }).lean()
     if (exist_level_name) throw statusError.bad_request_with_message(`level name ${name} is already exist!`)
 
-    const create_job_Level = await JobLevel.create({ name, status })
+    const create_job_Level = await JobLevel.create({ name, status, slug })
 
     res.json(create_job_Level)
   } catch (error) {
