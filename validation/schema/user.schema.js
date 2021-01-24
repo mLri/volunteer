@@ -2,8 +2,8 @@ module.exports.userSchema = {
   signin: {
     'username': {
       in: ['body'],
-      isEmail: {
-        errorMessage: 'must be use Email format or required!'
+      isString: {
+        errorMessage: 'must be use String type or required!'
       },
     },
     'password': {
@@ -34,8 +34,8 @@ module.exports.userSchema = {
       exists: {
         errorMessage: 'Missing property'
       },
-      isEmail: {
-        errorMessage: 'must be use Email format or required!'
+      isString: {
+        errorMessage: 'must be use String type or required!'
       },
     },
     'password': {
@@ -45,6 +45,12 @@ module.exports.userSchema = {
       },
       isString: {
         errorMessage: 'must be use String type!'
+      }
+    },
+    'email': {
+      in: ['body'],
+      isEmail: {
+        errorMessage: 'must be use email format'
       }
     }
   },

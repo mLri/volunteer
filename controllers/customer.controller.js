@@ -13,6 +13,35 @@ function convertToSlug(Text) {
     .replace(/[^\w-]+/g, '')
 }
 
+module.exports.getCustomer = async (req, res) => {
+  try {
+    const { search, fields } = req.query
+    let query, options = {}
+
+    if (search) {
+      query = {
+        $or: [
+          { first_name: { $regex: ".*" + search + ".*", $options: 'i' } },
+          { username: { $regex: ".*" + search + ".*", $options: 'i' } }
+        ]
+      }
+    }
+
+    if (fields) {
+      const field_arr = fields.split(',')
+      for (let field of field_arr) {
+        Object.assign(options, { [field]: 1 })
+      }
+    }
+
+    const find_user = await User.find(query, options)
+
+    res.json(find_user)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
+
 module.exports.updateCustomer = async (req, res) => {
   try {
     const _id = req.params.customer_id

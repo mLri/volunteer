@@ -2,9 +2,13 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const express_uploadfile = require('express-fileupload')
+
 require('dotenv').config()
 
 const app = express()
+
+const http = require('http').Server(app);
+require('./utils/socket.util').init(http)
 
 app.use(express.json())
 app.use(cors())
@@ -28,4 +32,4 @@ mongoose
 /* use routes */
 app.use('/api/v1', require('./routes'))
 
-app.listen(process.env.PORT, () => console.log(`Server running or port ${process.env.PORT}`))
+http.listen(process.env.PORT, () => console.log(`Server running or port ${process.env.PORT}`))
