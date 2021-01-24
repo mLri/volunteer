@@ -11,6 +11,13 @@ const customer_controller = require('../controllers/customer.controller')
 /* include helpers */
 const { checkAuth } = require('../helpers/token.helper')
 
+router.get('/',
+  checkAuth,
+  validateSchema(customerSchema.getCustomer),
+  validateSchemaType(customerSchema.getCustomer),
+  handleErrorValidate,
+  customer_controller.getCustomer)
+
 router.patch('/:customer_id',
   checkAuth,
   validateSchema(customerSchema.updateCustomer),

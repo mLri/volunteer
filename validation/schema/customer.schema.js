@@ -1,4 +1,22 @@
 module.exports.customerSchema = {
+  getCustomer: {
+    'search': {
+      in: ['query'],
+      optional: true,
+      matches: {
+        options: /^[\w\s\@\.]+$/i,
+        errorMessage: 'must be use a-z and () \ . : @'
+      }
+    },
+    'fields': {
+      in: ['query'],
+      optional: true,
+      matches: {
+        options: /^[\w\s\,]+$/i,
+        errorMessage: 'must be use a-z and ,'
+      }
+    }
+  },
   updateCustomer: {
     'customer_id': {
       in: ['params'],
@@ -30,6 +48,13 @@ module.exports.customerSchema = {
         errorMessage: 'must be use a-z or A-Z'
       }
     },
+    'email': {
+      in: ['body'],
+      optional: true,
+      isEmail: {
+        errorMessage: 'must be use email format!'
+      }
+    }
   },
   updateCompany: {
     'customer_id': {
@@ -67,7 +92,7 @@ module.exports.customerSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s]/i,
+        options: /^[\w\s]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
@@ -75,7 +100,7 @@ module.exports.customerSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s\(\)\,\-\.]/i,
+        options: /^[\w\s\(\)\,\-\.]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
@@ -98,7 +123,7 @@ module.exports.customerSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s\(\)\,\-\.\:\/]/i,
+        options: /^[\w\s\(\)\,\-\.\:\/]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     }
