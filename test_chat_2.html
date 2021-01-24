@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+​
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket IO</title>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    ​
+    <script>
+        $(() => {
+            var user_name = '6004eb9cb1138c03c42db6b3'
+            var room_id = '600507635077c013847361f8'
+            // var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcmluY2lwYWwiOnsiaG9tZWlkX3VzZXJuYW1lIjoiNjNiMTM3YjA0NjhmNDg1Nzk3ZDU4OWNjNTMzMzQ5YjYiLCJfaWQiOiI1ZTU2MjM3OTAwZTRjMDIzNTRlMmJiYWUiLCJmaXJzdF9uYW1lIjoiVG9zYXBvcm4iLCJsYXN0X25hbWUiOiJNYXBoYXN1ayIsImVtYWlsIjoidG9zYXBvcm5AaG9tZWRvdHRlY2guY29tIiwidXNlcl90eXBlIjoidXNlciIsImNyZWF0ZWRfYXQiOiIyMDIwLTAyLTI2VDA3OjUxOjIxLjQxNVoifSwiaXNzIjoiRVhBTVBMRV9KV1RfSVNTVUVSIiwiYXVkIjoiRVhBTVBMRV9KV1RfQVVESUVOQ0UiLCJzY29wZSI6InVzZXIiLCJzdWIiOiJob21lc2FsZWtpdCIsInJvbGVzIjoiUk9MRV9VU0VSIiwianRpIjoiOGU1YjllODMtMmQyYi00ZGFhLTljZmYtYjFjMTcwZDM0NTZkIiwiYWxnIjoiSFMyNTYiLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiaWF0IjoxNTg0NDMxMTA3LCJleHAiOjE1ODQ0ODUxMDd9.bVRRnupHBS1e5yV2Zq-CBU8eyWuBbxGwUHJsdcFHvEc"
+            let socket = io.connect('http://localhost:3000');
+            // var socket2 = io.connect('http://localhost:3000/', { 'query': 'token=' + token })
+
+            socket.emit('join_room', room_id)
+            // socket2.emit('join_room_web_noti', '5e56237900e4c02354e2bbae') // user_id
+
+            document.querySelector('#img').addEventListener('change', event => {
+                const file = event.target.files[0]
+
+                var fileReader = new FileReader(),
+                    slice = file.slice(0, 100000);
+
+                fileReader.readAsArrayBuffer(slice);
+                fileReader.onload = (evt) => {
+                    console.log('evt -> ', evt)
+                    var arrayBuffer = fileReader.result;
+                    let data = {
+                        room_id: room_id,
+                        user_id: user_name,
+                        files: {
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: arrayBuffer
+                        },
+                        type: 'file'
+                    }
+                    socket.emit('send_message', data);
+                    $('#img').val('');
+                }
+            })
+
+            $('form').submit((e) => {
+                e.preventDefault();
+                let data = {
+                    room_id: room_id,
+                    user_id: user_name,
+                    message: $('#m').val(),
+                    type: 'message'
+                }
+                socket.emit('send_message', data);
+                $('#m').val('');
+                $('#readed').val('')
+            });
+
+            $('#m').click(() => {
+                console.log('click')
+                let data = {
+                    room_id: room_id,
+                    user_id: user_name
+                }
+                socket.emit('read_message', data);
+            })
+
+            socket.on('send_message', (msg) => {
+                console.log('msg -> ', msg)
+                $('#readed').text('')
+                if (msg.type === 'file') {
+                    if (msg.chat.mimetype == 'text/plain') {
+                        var a = document.createElement("a");
+                        a.href = msg.chat.url
+                        a.innerHTML = msg.chat.file_name.toLowerCase()
+                        $('#message').append($('<li>')).html(a)
+                    } else {
+                        var img = document.createElement("IMG");
+                        img.src = msg.chat.url;
+                        $('#message').append($('<li>')).html(img);
+                    }
+                } else {
+                    if (user_name === msg.user_id) {
+                        $('#message').append($('<li>').text(msg.user_id + ': ' + msg.chat.message + ': right'));
+                    } else {
+                        $('#message').append($('<li>').text(msg.user_id + ': ' + msg.chat.message + ': left'));
+                    }
+                }
+            });
+
+            socket.on('read_message', (msg) => {
+                console.log('msg -> ', msg)
+                let txt = ''
+                for (let m of msg.user) {
+                    if (m._id != user_name) {
+                        txt += m.first_name + ', '
+                    }
+                }
+                console.log('txt -> ', txt)
+                if (txt != '') txt = 'read by ' + txt
+                $('#readed').text(txt)
+            })
+            
+            socket.on('socket_error', (error) => {
+                console.log(error)
+            });
+        });
+    </script>
+</head>
+​
+
+<body>
+    <div id="con"></div>
+    <ul id="message"></ul>
+    <div id="readed"></div>
+    <form action="">
+        <input id="m" autocomplete="off" />
+        <br />
+        <input type="file" id="img">
+        <br />
+        <button>Send</button>
+    </form>
+</body>
+​
+
+</html>

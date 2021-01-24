@@ -13,13 +13,17 @@ const chatSchema = new Schema({
   },
   chat: {
     message: { type: String },
+    file_name: { type: String },
     data: { type: Buffer },
     url: { type: String },
     mimetype: { type: String }
   },
-  readed_by: {
-    type: Schema.Types.ObjectId
-  }
+  readed_by: [
+    {
+      type: Schema.Types.ObjectId,
+      default: []
+    }
+  ]
 }, {
   timestamps: { createdAt: 'timestamp.created_at', updatedAt: 'timestamp.updated_at' }
 })

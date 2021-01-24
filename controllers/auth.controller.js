@@ -13,7 +13,7 @@ const { upload } = require('../helpers/upload.helper')
 
 module.exports.signUp = async (req, res) => {
   try {
-    const { first_name, last_name, username, password } = req.body
+    const { first_name, last_name, username, password, email } = req.body
 
     /* check exists user */
     const user = await User.findOne({ username }).lean()
@@ -28,7 +28,8 @@ module.exports.signUp = async (req, res) => {
       first_name,
       last_name,
       username,
-      password: hashPassword
+      password: hashPassword,
+      email
     })
 
     const create_user = await new_user.save()
@@ -45,7 +46,7 @@ module.exports.signIn = async (req, res) => {
 
     /* check user */
     const user = await User.findOne({ username }).lean()
-    if (!user) throw statusError.not_found
+    if (!user) throw statusError.bad_request_with_message('user not found!')
 
     /* check password */
     const compare_password = await bcrypt.compare(password, user.password)
@@ -57,6 +58,7 @@ module.exports.signIn = async (req, res) => {
       username: user.username,
       first_name: user.first_name,
       last_name: user.last_name,
+      email: user.email,
       role: user.role
     })
 
@@ -92,6 +94,7 @@ module.exports.refreshToken = async (req, res) => {
       username: user.username,
       first_name: user.first_name,
       last_name: user.last_name,
+      email: user.email,
       role: user.role
     })
 

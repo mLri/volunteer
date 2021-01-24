@@ -6,5 +6,6 @@ router.use('/todos', require('./todo.route'))
 router.use('/jobtype', require('./job_type.route'))
 router.use('/joblevel', require('./job_level.route'))
 router.use('/jobs', require('./job.route'))
+router.use('/chat_room', require('./chat_room.route'))
 
 module.exports = router
