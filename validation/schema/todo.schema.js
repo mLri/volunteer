@@ -45,25 +45,17 @@ module.exports.todoSchema = {
     }
   },
   createTodo: {
-    'user_id': {
-      in: ['body'],
-      optional: false,
-      isMongoId: {
-        errorMessage: 'must be use MongoID type!'
-      }
-    },
     'title': {
       in: ['body'],
-      optional: false,
-      isString: {
-        errorMessage: 'must be use String type!'
+      matches: {
+        options: /^[\w\s\(\)\,\-\.]+$/i,
+        errorMessage: 'must be use a-z or A-Z'
       }
     }
   },
   updateTodo: {
     'todo_id': {
       in: ['params'],
-      optional: false,
       isMongoId: {
         errorMessage: 'must be use MongoId type!'
       }
@@ -71,8 +63,9 @@ module.exports.todoSchema = {
     'title': {
       in: ['body'],
       optional: true,
-      isString: {
-        errorMessage: 'must be use String type!'
+      matches: {
+        options: /^[\w\s\(\)\,\-\.]+$/i,
+        errorMessage: 'must be use a-z or A-Z'
       }
     },
     'completed': {
@@ -86,7 +79,6 @@ module.exports.todoSchema = {
   deleteTodo: {
     'todo_id': {
       in: ['params'],
-      optional: false,
       isMongoId: {
         errorMessage: 'must be use MongoID type!'
       }

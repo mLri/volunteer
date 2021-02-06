@@ -97,7 +97,7 @@ module.exports.jobSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s\(\)\,\-\.]/i,
+        options: /^[\w\s\(\)\,\-\.]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
@@ -105,7 +105,7 @@ module.exports.jobSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s\(\)\,\-\.]/i,
+        options: /^[\w\s\(\)\,\-\.]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
@@ -160,7 +160,7 @@ module.exports.jobSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s\(\)\,\-\.]/i,
+        options: /^[\w\s\(\)\,\-\.]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
@@ -168,7 +168,7 @@ module.exports.jobSchema = {
       in: ['body'],
       optional: true,
       matches: {
-        options: /[\w\s\(\)\,\-\.]/i,
+        options: /^[\w\s\(\)\,\-\.]+$/i,
         errorMessage: 'must be use a-z or A-Z'
       }
     },
