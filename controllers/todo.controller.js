@@ -36,10 +36,11 @@ module.exports.listTodo = async (req, res) => {
 
 module.exports.createTodo = async (req, res) => {
   try {
-    const { user_id, title } = req.body
+    const { principal: { _id } } = req.user
+    const { title } = req.body
 
     const create_todo = await Todo.create({
-      user_id,
+      user_id: _id,
       title
     })
 

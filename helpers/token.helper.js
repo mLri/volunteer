@@ -25,7 +25,7 @@ module.exports.checkAuth = (req, res, next) => {
 }
 
 module.exports.createAccessToken = (payload, scope = 'admin') => {
-  return jwt.sign({ principal: { ...payload }, permissions: scope }, process.env.TOKEN_SECRET, { expiresIn: '30m' })
+  return jwt.sign({ principal: { ...payload }, permissions: scope }, process.env.TOKEN_SECRET, { expiresIn: '1d' })
 }
 
 module.exports.createRefreshToken = (payload) => {

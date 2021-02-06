@@ -16,7 +16,17 @@ module.exports.init = (http) => {
 
   io.on('connection', (socket) => {
 
+    let user = {}
+
     socket.on('join_room', async room_id => {
+      console.log('join room -> ', room_id)
+      if (!user.room_id) {
+        console.log('add room to user : ' + room_id)
+        user.room_id = room_id
+      } else {
+        console.log('leave room : ' + room_id)
+        socket.leave(user.room_id)
+      }
       socket.join(room_id)
     })
 
