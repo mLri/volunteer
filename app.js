@@ -7,8 +7,9 @@ require('dotenv').config()
 
 const app = express()
 
-const http = require('http').Server(app);
-require('./utils/socket.util').init(http)
+const http = require('http').Server(app)
+/* uncomment below code for use socket */
+// require('./utils/socket.util').init(http)
 
 app.use(express.json())
 app.use(cors())
