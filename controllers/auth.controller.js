@@ -9,7 +9,7 @@ const User = require('../models/user.model')
 const { createAccessToken, createRefreshToken } = require('../helpers/token.helper')
 const { handleError } = require('../helpers/handle_error.helper')
 const statusError = require('../helpers/status_error.helper')
-const { upload } = require('../helpers/upload.helper')
+// const { upload } = require('../helpers/upload.helper')
 
 module.exports.signUp = async (req, res) => {
   try {

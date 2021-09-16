@@ -1,19 +1,19 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
-const express_uploadfile = require('express-fileupload')
+const express_fileupload = require('express-fileupload')
 
 require('dotenv').config()
 
 const app = express()
 
-const http = require('http').Server(app)
+// const http = require('http').Server(app)
 /* uncomment below code for use socket */
 // require('./utils/socket.util').init(http)
 
 app.use(express.json())
 app.use(cors())
-app.use(express_uploadfile())
+app.use(express_fileupload())
 app.use(express.static('public'))
 
 /* config database */
@@ -33,4 +33,4 @@ mongoose
 /* use routes */
 app.use('/api/v1', require('./routes'))
 
-http.listen(process.env.PORT, () => console.log(`Server running or port ${process.env.PORT}`))
+app.listen(process.env.PORT, () => console.log(`Server running or port ${process.env.PORT}`))
