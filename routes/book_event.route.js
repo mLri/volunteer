@@ -5,30 +5,26 @@ const router = require('express').Router()
 // const { userSchema } = require('../validation/schema/user.schema')
 
 /* include controllers */
-const event_controller = require('../controllers/event.controller')
+const book_event_controller = require('../controllers/book_event.controller')
 
-/* TODO:: 
-    List api can select field
-    API get event by id and can select field also
+/* TODO::
+    API getBookEventById can select field
     Validate data
 */
 
 router.get('/',
-  event_controller.getListEvents)
+  book_event_controller.getBookEventById)
 
 router.post('/',
   // validateSchema(userSchema.signin),
   // validateSchemaType(userSchema.signin),
   // handleErrorValidate,
-  event_controller.createEvent)
+  book_event_controller.createBookEvent)
 
-router.patch('/:event_id',
-  event_controller.updateEvent)
+router.patch('/:book_event_id',
+  book_event_controller.updateBookEvent)
 
-router.delete('/:event_id',
-  event_controller.deleteEvent)
-
-router.get('/files/img/:event_id',
-  event_controller.getFileImage)
+router.delete('/:book_event_id',
+  book_event_controller.deleteBookEvent)
 
 module.exports = router

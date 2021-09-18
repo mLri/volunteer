@@ -19,7 +19,8 @@ const eventSchema = new Schema({
   },
   unit_per_day: {
     type: Number,
-    required: true
+    required: true,
+    default: 5
   },
   image: {
     mimetype: String,
