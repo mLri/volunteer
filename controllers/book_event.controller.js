@@ -27,13 +27,12 @@ module.exports.createBookEvent = async (req, res) => {
   try {
     const { event_id, prefix, firstname, lastname, employee_id, institution, tel, date_time } = req.body
 
-    const { unit_per_day } = await Event.findOne({ _id: event_id }, { _id: 0, unit_per_day: 1 }).lean()
+    const is_dup = await BookEvent.findOne({ event_id, employee_id, date_time: new Date(date_time) })
+    if (is_dup) throw statusError.bad_request_with_message('duplicate data!')
 
+    const { unit_per_day } = await Event.findOne({ _id: event_id }, { _id: 0, unit_per_day: 1 }).lean()
     const count_book_vaccine = await BookEvent.countDocuments({ event_id, employee_id, date_time: new Date(date_time) })
     if (count_book_vaccine >= unit_per_day) throw statusError.bad_request_with_message('can not bookking limit.')
-
-    const dup_data = await BookEvent.findOne({ event_id, employee_id, date_time: new Date(date_time) })
-    if (dup_data) throw statusError.bad_request_with_message('duplicate data!')
 
     const create_data = {
       event_id,

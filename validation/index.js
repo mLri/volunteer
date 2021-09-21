@@ -49,14 +49,13 @@ module.exports.validateSchema = (schema) => {
       const query_arr = Object.keys(req.query)
       const file_arr = req.files ? Object.keys(req.files) : []
 
-      concat_arr = body_arr.concat(params_arr ? params_arr : [], query_arr ? query_arr : [], file_arr ? file_arr : [])
+      const concat_arr = body_arr.concat(params_arr ? params_arr : [], query_arr ? query_arr : [], file_arr ? file_arr : [])
 
       for (let key of concat_arr) {
         if (!schema_arr.includes(key)) throw statusError.bad_request_with_message(`not allow field -> ${key}`)
       }
       next()
     } catch (error) {
-      console.log(error)
       handleError(error, res)
     }
   }
