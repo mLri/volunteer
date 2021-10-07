@@ -3,6 +3,7 @@ const router = require('express').Router()
 /* validation */
 // const { validateSchema, validateSchemaType, handleErrorValidate } = require('../validation')
 // const { userSchema } = require('../validation/schema/user.schema')
+const { checkAuth } = require('../helpers/token.helper')
 
 /* include controllers */
 const event_controller = require('../controllers/event.controller')
@@ -14,7 +15,12 @@ const event_controller = require('../controllers/event.controller')
 */
 
 router.get('/',
+  checkAuth,
   event_controller.getListEvents)
+
+router.get('/:event_id',
+  checkAuth,
+  event_controller.getEvent)
 
 router.post('/',
   // validateSchema(userSchema.signin),

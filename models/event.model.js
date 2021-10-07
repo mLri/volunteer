@@ -31,8 +31,8 @@ const eventSchema = new Schema({
   calendars: [
     {
       _id: false,
-      name: {
-        type: String,
+      date: {
+        type: Date,
         required: true
       },
       date_of_month: [

@@ -11,8 +11,29 @@ const { uploadFile } = require('../helpers/upload.helper')
 
 module.exports.getListEvents = async (req, res) => {
   try {
-    const events = await Event.find().lean()
+    const { fields } = req.query
+    let field_option = {}
+
+    if (fields) {
+      const field_arr = fields.split(',')
+      for (let field of field_arr) {
+        Object.assign(field_option, { [field]: 1 })
+      }
+    }
+
+    const events = await Event.find({}, field_option).lean()
     res.json(events)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
+
+module.exports.getEvent = async (req, res) => {
+  try {
+    const { event_id } = req.params
+    const event = await Event.findOne({ _id: event_id });
+    
+    res.json(event)
   } catch (error) {
     handleError(error, res)
   }
