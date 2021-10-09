@@ -45,6 +45,10 @@ const eventSchema = new Schema({
           dayoff_status: {
             type: Boolean,
             default: false
+          },
+          handle_click: {
+            type: Boolean,
+            default: false
           }
         }
       ]
