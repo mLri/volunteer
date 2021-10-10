@@ -23,15 +23,18 @@ router.get('/:event_id',
   event_controller.getEvent)
 
 router.post('/',
+  checkAuth,
   // validateSchema(userSchema.signin),
   // validateSchemaType(userSchema.signin),
   // handleErrorValidate,
   event_controller.createEvent)
 
 router.patch('/:event_id',
+  checkAuth,
   event_controller.updateEvent)
 
 router.delete('/:event_id',
+  checkAuth,
   event_controller.deleteEvent)
 
 router.get('/files/img/:event_id',
