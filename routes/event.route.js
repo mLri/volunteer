@@ -15,11 +15,9 @@ const event_controller = require('../controllers/event.controller')
 */
 
 router.get('/',
-  checkAuth,
   event_controller.getListEvents)
 
 router.get('/:event_id',
-  checkAuth,
   event_controller.getEvent)
 
 router.post('/',
