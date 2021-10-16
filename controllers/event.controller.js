@@ -3,6 +3,7 @@ const fs = require('fs')
 
 /* include models */
 const Event = require('../models/event.model')
+const BookEvent = require('../models/book_event.model')
 
 /* include helpers */
 const { handleError } = require('../helpers/handle_error.helper')
@@ -31,8 +32,43 @@ module.exports.getListEvents = async (req, res) => {
 module.exports.getEvent = async (req, res) => {
   try {
     const { event_id } = req.params
-    const event = await Event.findOne({ _id: event_id });
-    
+    const event = await Event.findOne({ _id: event_id })
+
+    const start_date = new Date(event.start_date)
+    const end_date = new Date(event.end_date)
+
+    const book_events = await BookEvent.aggregate([
+      {
+        $match: {
+          $and: [
+            { date_time: { $gte: start_date } },
+            { date_time: { $lte: end_date } }
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: '$date_time',
+          count: { $sum: 1 }
+        }
+      }
+    ])
+
+    if (book_events.length) {
+      for (let book_date of book_events) {
+
+        for (let month of event.calendars) {
+          let find_book_date = month.date_of_month.find(val => {
+            return new Date(val.date).getTime() === new Date(book_date._id).getTime()
+          })
+          if (find_book_date) {
+            find_book_date['amont'] = event.unit_per_day - book_date.count
+          }
+        }
+
+      }
+    }
+
     res.json(event)
   } catch (error) {
     handleError(error, res)

@@ -49,6 +49,9 @@ const eventSchema = new Schema({
           handle_click: {
             type: Boolean,
             default: false
+          },
+          amont: {
+            type: Number
           }
         }
       ]

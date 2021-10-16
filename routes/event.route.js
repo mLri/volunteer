@@ -28,7 +28,7 @@ router.post('/',
   event_controller.createEvent)
 
 router.patch('/:event_id',
-  checkAuth,
+  // checkAuth,
   event_controller.updateEvent)
 
 router.delete('/:event_id',
