@@ -12,7 +12,8 @@ const statusError = require('../helpers/status_error.helper')
 module.exports.getBookEventById = async (req, res) => {
   try {
     const { fields } = req.query
-    let query, field_option = {}
+    let query = {}
+    let field_option = {}
     const { event_id } = req.query
 
     if (event_id) query.event_id = event_id
@@ -26,6 +27,17 @@ module.exports.getBookEventById = async (req, res) => {
 
     const book_events = await BookEvent.find(query, field_option).lean()
     res.json(book_events)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
+
+module.exports.getBookEvent = async (req, res) => {
+  try {
+    const { book_event_id } = req.params
+
+    const book_event = await BookEvent.findOne({ _id: book_event_id })
+    res.json(book_event)
   } catch (error) {
     handleError(error, res)
   }

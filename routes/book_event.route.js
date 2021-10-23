@@ -15,6 +15,9 @@ const book_event_controller = require('../controllers/book_event.controller')
 router.get('/',
   book_event_controller.getBookEventById)
 
+router.get('/:book_event_id',
+  book_event_controller.getBookEvent)
+
 router.post('/',
   // validateSchema(userSchema.signin),
   // validateSchemaType(userSchema.signin),
