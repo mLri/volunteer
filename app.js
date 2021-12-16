@@ -12,6 +12,14 @@ app.use(cors())
 app.use(express_fileupload())
 app.use(express.static('public'))
 
+// app.use(function (req, res, next) {
+//   res.setHeader(
+//     'Content-Security-Policy',
+//     "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
+//   );
+//   next();
+// });
+
 /* config database */
 const mongo_uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@backend.hn2id.mongodb.net/${process.env.MONGO_NAME}?retryWrites=true&w=majority`
 mongoose

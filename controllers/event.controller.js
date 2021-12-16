@@ -137,8 +137,13 @@ module.exports.deleteEvent = async (req, res) => {
   try {
     const { event_id } = req.params
 
-    const delete_event = await Event.findByIdAndDelete({ _id: event_id })
-    if (!delete_event) throw statusError.bad_request_with_message(`not found event_id -> ${_id}`)
+    const find_event = await Event.findOne({ _id: event_id }).lean()
+    if (!find_event) throw statusError.bad_request_with_message(`not found event_id ${event_id}`)
+
+    /* delete image */
+    if (find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
+
+    await Event.deleteOne({ _id: event_id })
 
     res.status(204).send()
   } catch (error) {
@@ -151,10 +156,16 @@ module.exports.getFileImage = async (req, res) => {
     const { event_id } = req.params
     const find_event = await Event.findOne({ _id: event_id }, { image: 1 }).lean()
 
-    if (!find_event.image) throw statusError.bad_request_with_message('have no image!')
+    let data = null
+    if (!find_event.image) {
+      /* return default image */
+      data = fs.readFileSync(`public/default/img_default.png`)
+      res.contentType('image/png')
+    } else {
+      data = fs.readFileSync(`public/${find_event.image.name}`)
+      res.contentType(find_event.image.mimetype)
+    }
 
-    const data = fs.readFileSync(`public/${find_event.image.name}`)
-    res.contentType(find_event.image.mimetype)
     res.send(data)
   } catch (error) {
     handleError(error, res)
