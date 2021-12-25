@@ -141,7 +141,7 @@ module.exports.deleteEvent = async (req, res) => {
     if (!find_event) throw statusError.bad_request_with_message(`not found event_id ${event_id}`)
 
     /* delete image */
-    if (find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
+    // if (find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
 
     await Event.deleteOne({ _id: event_id })
 
