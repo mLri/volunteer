@@ -35,7 +35,7 @@ router.delete('/:event_id',
   checkAuth,
   event_controller.deleteEvent)
 
-router.get('/files/img/:event_id',
+router.get('/files/img/:event_id/:img_name',
   event_controller.getFileImage)
 
 module.exports = router

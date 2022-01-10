@@ -1,5 +1,6 @@
 /* include modules */
 const fs = require('fs')
+const mongoose = require('mongoose')
 
 /* include models */
 const Event = require('../models/event.model')
@@ -14,6 +15,9 @@ module.exports.getListEvents = async (req, res) => {
   try {
     const { fields } = req.query
     let field_option = {}
+    let query = {
+      delete_status: false
+    }
 
     if (fields) {
       const field_arr = fields.split(',')
@@ -22,7 +26,7 @@ module.exports.getListEvents = async (req, res) => {
       }
     }
 
-    const events = await Event.find({}, field_option).lean()
+    const events = await Event.find(query, field_option).lean()
     res.json(events)
   } catch (error) {
     handleError(error, res)
@@ -42,7 +46,8 @@ module.exports.getEvent = async (req, res) => {
         $match: {
           $and: [
             { date_time: { $gte: start_date } },
-            { date_time: { $lte: end_date } }
+            { date_time: { $lte: end_date } },
+            { event_id: mongoose.Types.ObjectId(event_id) }
           ]
         }
       },
@@ -63,6 +68,7 @@ module.exports.getEvent = async (req, res) => {
           })
           if (find_book_date) {
             find_book_date['amont'] = event.unit_per_day - book_date.count
+            if (find_book_date['amont'] < 0) find_book_date['amont'] = 0
           }
         }
 
@@ -109,7 +115,7 @@ module.exports.updateEvent = async (req, res) => {
     /* upload file */
     if (req.files) {
       /* delete old image */
-      if (find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
+      if (find_event.image && find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
 
       uploaded_img = await uploadFile(req.files.image)
       find_event.image = {
@@ -137,13 +143,14 @@ module.exports.deleteEvent = async (req, res) => {
   try {
     const { event_id } = req.params
 
-    const find_event = await Event.findOne({ _id: event_id }).lean()
+    let find_event = await Event.findOne({ _id: event_id })
     if (!find_event) throw statusError.bad_request_with_message(`not found event_id ${event_id}`)
 
     /* delete image */
-    // if (find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
+    // if (find_event.image && find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
 
-    await Event.deleteOne({ _id: event_id })
+    find_event.delete_status = true
+    await find_event.save()
 
     res.status(204).send()
   } catch (error) {
