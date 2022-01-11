@@ -57,6 +57,10 @@ const eventSchema = new Schema({
       ]
     }
   ],
+  success_status: {
+    type: Boolean,
+    default: true
+  },
   delete_status: {
     type: Boolean,
     default: false
