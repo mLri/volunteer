@@ -14,10 +14,28 @@ const { uploadFile } = require('../helpers/upload.helper')
 module.exports.getListEvents = async (req, res) => {
   try {
     const { fields } = req.query
+    let events
+    const {
+      limit = 10,
+      sorted_by = 'created_at',
+      sorted_order = 'asc',
+      page = 1
+    } = req.query
+
+    const { total = false } = req.query
     let field_option = {}
     let query = {
       delete_status: false
     }
+
+    /* calculate page */
+    const skip_num = (page - 1) * limit
+    const limit_num = parseInt(limit)
+
+    /* manage sort */
+    const order = sorted_order === 'asc' ? 1 : -1
+    if (sorted_by === 'created_at') { sort = { 'timestamp.created_at': order } }
+    // if (sorted_by === 'title') { sort = { 'title': order } }
 
     if (fields) {
       const field_arr = fields.split(',')
@@ -26,7 +44,11 @@ module.exports.getListEvents = async (req, res) => {
       }
     }
 
-    const events = await Event.find(query, field_option).lean()
+    if (total) {
+      events = await Event.countDocuments(query, field_option)
+    } else {
+      events = await Event.find(query, field_option).sort(sort).limit(limit_num).skip(skip_num)
+    }
     res.json(events)
   } catch (error) {
     handleError(error, res)
