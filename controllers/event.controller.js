@@ -11,6 +11,14 @@ const { handleError } = require('../helpers/handle_error.helper')
 const statusError = require('../helpers/status_error.helper')
 const { uploadFile } = require('../helpers/upload.helper')
 
+function ranNameFileUpload(file_name) {
+  /* if use throw in child func it thorw to mom catch */
+  if (!file_name) throw statusError.bad_request_with_message('file have no name image!')
+  const split_name = file_name.split('.')
+  const random_name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  return `${random_name}.${split_name[split_name.length - 1]}`
+}
+
 module.exports.getListEvents = async (req, res) => {
   try {
     const { fields } = req.query
@@ -105,17 +113,22 @@ module.exports.getEvent = async (req, res) => {
 
 module.exports.createEvent = async (req, res) => {
   try {
-    let uploaded_img
+    // let uploaded_img
     let create_event_obj = req.body
     if (typeof create_event_obj.calendars === 'string') create_event_obj.calendars = JSON.parse(create_event_obj.calendars)
 
     /* upload file */
     if (req.files) {
-      uploaded_img = await uploadFile(req.files.image)
       create_event_obj.image = {
-        name: uploaded_img.name,
-        mimetype: uploaded_img.mimetype
+        name: ranNameFileUpload(req.files.image.name),
+        mimetype: req.files.image.mimetype,
+        file: req.files.image.data
       }
+      //   uploaded_img = await uploadFile(req.files.image)
+      //   create_event_obj.image = {
+      //     name: uploaded_img.name,
+      //     mimetype: uploaded_img.mimetype
+      //   }
     }
 
     const create_event = await Event.create(create_event_obj)
@@ -127,7 +140,8 @@ module.exports.createEvent = async (req, res) => {
 
 module.exports.updateEvent = async (req, res) => {
   try {
-    let uploaded_img, update_event
+    // let uploaded_img
+    let update_event
     let update_event_obj = req.body
     const _id = req.params.event_id
 
@@ -136,14 +150,19 @@ module.exports.updateEvent = async (req, res) => {
 
     /* upload file */
     if (req.files) {
-      /* delete old image */
-      if (find_event.image && find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
-
-      uploaded_img = await uploadFile(req.files.image)
       find_event.image = {
-        name: uploaded_img.name,
-        mimetype: uploaded_img.mimetype
+        name: ranNameFileUpload(req.files.image.name),
+        mimetype: req.files.image.mimetype,
+        file: req.files.image.data
       }
+      /* delete old image */
+      // if (find_event.image && find_event.image.name) fs.unlinkSync(`public/${find_event.image.name}`)
+
+      // uploaded_img = await uploadFile(req.files.image)
+      // find_event.image = {
+      //   name: uploaded_img.name,
+      //   mimetype: uploaded_img.mimetype
+      // }
     }
 
     update_event = find_event
@@ -182,20 +201,12 @@ module.exports.deleteEvent = async (req, res) => {
 
 module.exports.getFileImage = async (req, res) => {
   try {
-    const { event_id } = req.params
-    const find_event = await Event.findOne({ _id: event_id }, { image: 1 }).lean()
+    const { img_name } = req.params
+    const find_event = await Event.findOne({ 'image.name': img_name }, { image: 1 })
 
-    let data = null
-    if (!find_event.image) {
-      /* return default image */
-      data = fs.readFileSync(`public/default/img_default.png`)
-      res.contentType('image/png')
-    } else {
-      data = fs.readFileSync(`public/${find_event.image.name}`)
-      res.contentType(find_event.image.mimetype)
-    }
 
-    res.send(data)
+    res.contentType(find_event.image.mimetype)
+    res.send(find_event.image.file)
   } catch (error) {
     handleError(error, res)
   }
