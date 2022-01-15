@@ -11,10 +11,27 @@ const statusError = require('../helpers/status_error.helper')
 
 module.exports.getBookEventById = async (req, res) => {
   try {
-    const { fields } = req.query
+    let book_events
     let query = {}
     let field_option = {}
-    const { event_id } = req.query
+    const {
+      limit = 10,
+      sorted_by = 'created_at',
+      sorted_order = 'asc',
+      page = 1,
+      fields,
+      event_id,
+      total = false
+    } = req.query
+
+    /* calculate page */
+    const skip_num = (page - 1) * limit
+    const limit_num = parseInt(limit)
+
+    /* manage sort */
+    const order = sorted_order === 'asc' ? 1 : -1
+    if (sorted_by === 'created_at') { sort = { 'timestamp.created_at': order } }
+    // if (sorted_by === 'title') { sort = { 'title': order } }
 
     if (event_id) query.event_id = event_id
 
@@ -25,7 +42,13 @@ module.exports.getBookEventById = async (req, res) => {
       }
     }
 
-    const book_events = await BookEvent.find(query, field_option).lean()
+    if (total) {
+      book_events = await BookEvent.countDocuments(query, field_option)
+    } else {
+      // events = await Event.find(query, field_option).sort(sort).limit(limit_num).skip(skip_num)
+      book_events = await BookEvent.find(query, field_option).sort(sort).limit(limit_num).skip(skip_num)
+    }
+
     res.json(book_events)
   } catch (error) {
     handleError(error, res)

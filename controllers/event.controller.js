@@ -21,20 +21,19 @@ function ranNameFileUpload(file_name) {
 
 module.exports.getListEvents = async (req, res) => {
   try {
-    const { fields } = req.query
     let events
-    const {
-      limit = 10,
-      sorted_by = 'created_at',
-      sorted_order = 'asc',
-      page = 1
-    } = req.query
-
-    const { total = false } = req.query
     let field_option = {}
     let query = {
       delete_status: false
     }
+    const {
+      limit = 10,
+      sorted_by = 'created_at',
+      sorted_order = 'asc',
+      page = 1,
+      total = false,
+      fields
+    } = req.query
 
     /* calculate page */
     const skip_num = (page - 1) * limit
