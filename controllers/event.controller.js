@@ -32,7 +32,9 @@ module.exports.getListEvents = async (req, res) => {
       sorted_order = 'asc',
       page = 1,
       total = false,
-      fields
+      fields,
+      search = '',
+      success_status = 'both'
     } = req.query
 
     /* calculate page */
@@ -54,6 +56,8 @@ module.exports.getListEvents = async (req, res) => {
     if (total) {
       events = await Event.countDocuments(query, field_option)
     } else {
+      if(search) query['name'] = { $regex: ".*" + search.trim() + ".*", $options: 'i' }
+      if(success_status !== 'both') query['success_status'] = success_status
       events = await Event.find(query, field_option).sort(sort).limit(limit_num).skip(skip_num)
     }
     res.json(events)
