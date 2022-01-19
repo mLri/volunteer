@@ -44,7 +44,7 @@ module.exports.getListEvents = async (req, res) => {
     /* manage sort */
     const order = sorted_order === 'asc' ? 1 : -1
     if (sorted_by === 'created_at') { sort = { 'timestamp.created_at': order } }
-    // if (sorted_by === 'title') { sort = { 'title': order } }
+    if (sorted_by === 'end_date') sort = { 'end_date': order }
 
     if (fields) {
       const field_arr = fields.split(',')
@@ -56,8 +56,8 @@ module.exports.getListEvents = async (req, res) => {
     if (total) {
       events = await Event.countDocuments(query, field_option)
     } else {
-      if(search) query['name'] = { $regex: ".*" + search.trim() + ".*", $options: 'i' }
-      if(success_status !== 'both') query['success_status'] = success_status
+      if (search) query['name'] = { $regex: ".*" + search.trim() + ".*", $options: 'i' }
+      if (success_status !== 'both') query['success_status'] = success_status
       events = await Event.find(query, field_option).sort(sort).limit(limit_num).skip(skip_num)
     }
     res.json(events)
