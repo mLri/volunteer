@@ -15,6 +15,18 @@ module.exports.userSchema = {
     }
   },
   signup: {
+    'employee_id': {
+      in: ['body'],
+      isString: {
+        errorMessage: 'must be use String type!'
+      }
+    },
+    'prefix': {
+      in: ['body'],
+      isString: {
+        errorMessage: 'must be use String type!'
+      }
+    },
     'first_name': {
       in: ['body'],
       optional: true,
@@ -25,6 +37,18 @@ module.exports.userSchema = {
     'last_name': {
       in: ['body'],
       optional: true,
+      isString: {
+        errorMessage: 'must be use String type!'
+      }
+    },
+    'institution': {
+      in: ['body'],
+      isString: {
+        errorMessage: 'must be use String type!'
+      }
+    },
+    'tel': {
+      in: ['body'],
       isString: {
         errorMessage: 'must be use String type!'
       }
@@ -51,6 +75,14 @@ module.exports.userSchema = {
       in: ['body'],
       isEmail: {
         errorMessage: 'must be use email format'
+      }
+    },
+    'role': {
+      in: ['body'],
+      optional: true,
+      isIn: {
+        options: [['admin', 'user']],
+        errorMessage: 'no enum [admin, user]'
       }
     }
   },

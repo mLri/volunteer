@@ -13,7 +13,7 @@ const statusError = require('../helpers/status_error.helper')
 
 module.exports.signUp = async (req, res) => {
   try {
-    const { first_name, last_name, username, password, email } = req.body
+    const { employee_id, prefix, first_name, last_name, institution, tel, username, password, email, role = 'admin' } = req.body
 
     /* check exists user */
     const user = await User.findOne({ username }).lean()
@@ -25,11 +25,16 @@ module.exports.signUp = async (req, res) => {
 
     /* create new user */
     const new_user = new User({
+      employee_id,
+      prefix,
       first_name,
       last_name,
+      institution,
+      tel,
       username,
       password: hashPassword,
-      email
+      email,
+      role
     })
 
     const create_user = await new_user.save()
@@ -56,19 +61,24 @@ module.exports.signIn = async (req, res) => {
     const access_token = createAccessToken({
       _id: user._id,
       username: user.username,
+      employee_id: user.employee_id,
+      prefix: user.prefix,
       first_name: user.first_name,
       last_name: user.last_name,
+      institution: user.institution,
+      tel: user.tel,
       email: user.email,
       role: user.role
-    })
+    }, user.role)
 
     /* genarate refresh token */
-    const refresh_token = createRefreshToken({ _id: user._id })
+    const refresh_token = createRefreshToken({ _id: user._id }, user.role)
 
     res.json({
       access_token,
       refresh_token,
-      username: user.username
+      username: user.username,
+      role: user.role
     })
   } catch (error) {
     console.log(error)

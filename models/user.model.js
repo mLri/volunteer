@@ -2,11 +2,27 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
+  employee_id: {
+    type: String,
+    required: true
+  },
+  prefix: {
+    type: String,
+    required: true
+  },
   first_name: {
     type: String
   },
   last_name: {
     type: String
+  },
+  institution: {
+    type: String,
+    required: true
+  },
+  tel: {
+    type: String,
+    required: true
   },
   username: {
     type: String,
@@ -28,6 +44,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
+    enum: ['admin', 'user'],
     default: 'admin'
   },
   company: {
