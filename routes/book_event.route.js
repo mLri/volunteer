@@ -18,6 +18,12 @@ router.get('/',
 router.get('/:book_event_id',
   book_event_controller.getBookEvent)
 
+router.get('/download/pdf',
+  book_event_controller.downloadPdfByEventId)
+
+router.get('/download/excel',
+  book_event_controller.downloadExcelByEventId)
+
 router.post('/',
   // validateSchema(userSchema.signin),
   // validateSchemaType(userSchema.signin),

@@ -1,5 +1,5 @@
 /* include modules */
-const fs = require('fs')
+const excel = require('exceljs')
 
 /* include models */
 const BookEvent = require('../models/book_event.model')
@@ -8,6 +8,7 @@ const Event = require('../models/event.model')
 /* include helpers */
 const { handleError } = require('../helpers/handle_error.helper')
 const statusError = require('../helpers/status_error.helper')
+const { createRow, createTable, createHtml, generatePDF, randomName } = require('../helpers/pdf_tools.helper')
 
 module.exports.getBookEventById = async (req, res) => {
   try {
@@ -50,6 +51,121 @@ module.exports.getBookEventById = async (req, res) => {
     }
 
     res.json(book_events)
+  } catch (error) {
+    handleError(error, res)
+  }
+}
+
+module.exports.downloadPdfByEventId = async (req, res) => {
+  try {
+    let book_events
+    let query = {}
+    let field_option = {}
+
+    const {
+      sorted_by = 'created_at',
+      sorted_order = 'asc',
+      fields,
+      event_id,
+    } = req.query
+
+    if (fields) {
+      const field_arr = fields.split(',')
+      for (let field of field_arr) {
+        Object.assign(field_option, { [field]: 1 })
+      }
+    }
+
+    /* manage sort */
+    const order = sorted_order === 'asc' ? 1 : -1
+    if (sorted_by === 'created_at') { sort = { 'timestamp.created_at': order } }
+
+    if (event_id) query.event_id = event_id
+
+    book_events = await BookEvent.find(query, field_option).sort(sort)
+
+    if (!book_events) throw statusError.bad_request
+
+    const rows = book_events.map(createRow).join("");
+    const table = createTable(rows);
+    const html = createHtml(table);
+    const pdfBuffer = await generatePDF(html);
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment;filename=${randomName('pdf')}`,
+    });
+
+    res.status(200).send(pdfBuffer);
+  } catch (error) {
+    handleError(error, res)
+  }
+}
+
+module.exports.downloadExcelByEventId = async (req, res) => {
+  try {
+    let book_events
+    let query = {}
+    let field_option = {}
+
+    const {
+      sorted_by = 'created_at',
+      sorted_order = 'asc',
+      fields,
+      event_id,
+    } = req.query
+
+    if (fields) {
+      const field_arr = fields.split(',')
+      for (let field of field_arr) {
+        Object.assign(field_option, { [field]: 1 })
+      }
+    }
+
+    /* manage sort */
+    const order = sorted_order === 'asc' ? 1 : -1
+    if (sorted_by === 'created_at') { sort = { 'timestamp.created_at': order } }
+
+    if (event_id) query.event_id = event_id
+
+    book_events = await BookEvent.find(query, field_option).sort(sort)
+
+    if (!book_events) throw statusError.bad_request
+
+    const book_events_map = book_events.map(val => {
+      return {
+        employee_id: val.employee_id,
+        prefix: val.prefix,
+        firstname: val.firstname,
+        lastname: val.lastname,
+        institution: val.institution,
+        tel: val.tel,
+        date_time: `${val.date_time.getFullYear()}-${val.date_time.getMonth()+1}-${val.date_time.getDate()}`
+      }
+    })
+
+    let workbook = new excel.Workbook();
+    let worksheet = workbook.addWorksheet("BookeEvent");
+    worksheet.columns = [
+      { header: "Employee Id", key: "employee_id", width: 25 },
+      { header: "Prefix", key: "prefix", width: 25 },
+      { header: "First name", key: "firstname", width: 25 },
+      { header: "Last name", key: "lastname", width: 25 },
+      { header: "Institution", key: "institution", width: 25 },
+      { header: "Tel", key: "tel", width: 25 },
+      { header: "Date", key: "date_time", width: 25 },
+    ]
+    worksheet.addRows(book_events_map)
+
+    res.set({
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": `attachment;filename=${randomName('xlsx')}`,
+    });
+
+    await workbook.xlsx.write(res)
+
+    res.status(200).end()
   } catch (error) {
     handleError(error, res)
   }
