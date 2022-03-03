@@ -28,6 +28,18 @@ const eventSchema = new Schema({
     file: Buffer,
     img_url: String
   },
+  image_m: {
+    mimetype: String,
+    name: String,
+    file: Buffer,
+    img_url: String
+  },
+  image_s: {
+    mimetype: String,
+    name: String,
+    file: Buffer,
+    img_url: String
+  },
   calendars: [
     {
       _id: false,

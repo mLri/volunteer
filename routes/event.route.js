@@ -1,12 +1,12 @@
-const router = require('express').Router()
+const router = require("express").Router();
 
 /* validation */
 // const { validateSchema, validateSchemaType, handleErrorValidate } = require('../validation')
 // const { userSchema } = require('../validation/schema/user.schema')
-const { checkAuth } = require('../helpers/token.helper')
+const { checkAuth } = require("../helpers/token.helper");
 
 /* include controllers */
-const event_controller = require('../controllers/event.controller')
+const event_controller = require("../controllers/event.controller");
 
 /* TODO:: 
     List api can select field
@@ -14,28 +14,31 @@ const event_controller = require('../controllers/event.controller')
     Validate data
 */
 
-router.get('/',
-  event_controller.getListEvents)
+router.get("/", event_controller.getListEvents);
 
-router.get('/:event_id',
-  event_controller.getEvent)
+router.get("/:event_id", event_controller.getEvent);
 
-router.post('/',
-  checkAuth,
+router.post(
+  "/",
+  // checkAuth,
   // validateSchema(userSchema.signin),
   // validateSchemaType(userSchema.signin),
   // handleErrorValidate,
-  event_controller.createEvent)
+  event_controller.createEvent
+);
 
-router.patch('/:event_id',
+router.patch(
+  "/:event_id",
   // checkAuth,
-  event_controller.updateEvent)
+  event_controller.updateEvent
+);
 
-router.delete('/:event_id',
-  checkAuth,
-  event_controller.deleteEvent)
+router.delete("/:event_id", checkAuth, event_controller.deleteEvent);
 
-router.get('/files/img/:img_name',
-  event_controller.getFileImage)
+router.get("/files/img/:img_name", event_controller.getFileImage);
 
-module.exports = router
+router.get("/files/img/s/:img_name", event_controller.getFileImageS);
+
+router.get("/files/img/m/:img_name", event_controller.getFileImageM);
+
+module.exports = router;
