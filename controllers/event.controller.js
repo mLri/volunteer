@@ -126,7 +126,6 @@ module.exports.getEvent = async (req, res) => {
 
 module.exports.createEvent = async (req, res) => {
   try {
-    console.log(req.files.image.data);
     // let uploaded_img
     let create_event_obj = req.body;
     if (typeof create_event_obj.calendars === "string")
@@ -173,6 +172,7 @@ module.exports.createEvent = async (req, res) => {
     const create_event = await Event.create(create_event_obj);
     res.json(create_event);
   } catch (error) {
+    console.log(error)
     handleError(error, res);
   }
 };
